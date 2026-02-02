@@ -81,6 +81,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-deriveddata-
 
+      - name: Cache Swift Package Manager
+        uses: actions/cache@v4
+        with:
+          path: SourcePackages
+          key: ${{ runner.os }}-spm-${{ hashFiles('project.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+
       - name: Install dependencies
         run: |
           brew install xcodegen xcbeautify || true
@@ -88,12 +96,20 @@ jobs:
       - name: Generate Xcode project
         run: xcodegen generate
 
+      - name: Resolve package dependencies
+        run: |
+          xcodebuild -project Speakable.xcodeproj \
+            -scheme Speakable \
+            -resolvePackageDependencies \
+            -clonedSourcePackagesDirPath SourcePackages 2>&1 | xcbeautify
+
       - name: Build (Debug)
         run: |
           xcodebuild -project Speakable.xcodeproj \
             -scheme Speakable \
             -configuration Debug \
             -destination 'platform=macOS' \
+            -clonedSourcePackagesDirPath SourcePackages \
             build 2>&1 | xcbeautify
 
       - name: Test
@@ -102,6 +118,7 @@ jobs:
             -scheme Speakable \
             -configuration Debug \
             -destination 'platform=macOS' \
+            -clonedSourcePackagesDirPath SourcePackages \
             test 2>&1 | xcbeautify
 
   # Release build only runs on main branch after tests pass
@@ -132,12 +149,27 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-deriveddata-release-
 
+      - name: Cache Swift Package Manager
+        uses: actions/cache@v4
+        with:
+          path: SourcePackages
+          key: ${{ runner.os }}-spm-${{ hashFiles('project.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+
       - name: Install dependencies
         run: |
           brew install xcodegen xcbeautify || true
 
       - name: Generate Xcode project
         run: xcodegen generate
+
+      - name: Resolve package dependencies
+        run: |
+          xcodebuild -project Speakable.xcodeproj \
+            -scheme Speakable \
+            -resolvePackageDependencies \
+            -clonedSourcePackagesDirPath SourcePackages 2>&1 | xcbeautify
 
       - name: Build (Release)
         run: |
@@ -146,6 +178,7 @@ jobs:
             -configuration Release \
             -destination 'platform=macOS' \
             -derivedDataPath build \
+            -clonedSourcePackagesDirPath SourcePackages \
             build 2>&1 | xcbeautify
 
       - name: Package app
