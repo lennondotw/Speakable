@@ -1,0 +1,73 @@
+name: OpenAITTS
+options:
+  bundleIdPrefix: com.openaitts
+  deploymentTarget:
+    macOS: "13.0"
+  xcodeVersion: "15.0"
+  createIntermediateGroups: true
+  generateEmptyDirectories: true
+
+schemes:
+  OpenAITTS:
+    build:
+      targets:
+        OpenAITTS: all
+        OpenAITTSTests: [test]
+    run:
+      config: Debug
+      executable: OpenAITTS
+    test:
+      config: Debug
+      targets:
+        - OpenAITTSTests
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+    DEVELOPMENT_TEAM: ""
+    CODE_SIGN_IDENTITY: "-"
+    CODE_SIGN_STYLE: Automatic
+
+targets:
+  OpenAITTS:
+    type: application
+    platform: macOS
+    sources:
+      - path: OpenAITTS/Sources
+      - path: OpenAITTS/Resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.openaitts.app
+        INFOPLIST_FILE: OpenAITTS/Resources/Info.plist
+        PRODUCT_NAME: OpenAI TTS
+        PRODUCT_MODULE_NAME: OpenAITTS
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ENABLE_HARDENED_RUNTIME: YES
+        COMBINE_HIDPI_IMAGES: YES
+        LD_RUNPATH_SEARCH_PATHS:
+          - $(inherited)
+          - "@executable_path/../Frameworks"
+    entitlements:
+      path: OpenAITTS/Resources/OpenAITTS.entitlements
+
+  OpenAITTSTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: OpenAITTSTests
+    dependencies:
+      - target: OpenAITTS
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.openaitts.tests
+        TEST_HOST: $(BUILT_PRODUCTS_DIR)/OpenAI TTS.app/Contents/MacOS/OpenAI TTS
+        BUNDLE_LOADER: $(TEST_HOST)
+        GENERATE_INFOPLIST_FILE: YES
