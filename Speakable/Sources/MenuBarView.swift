@@ -10,11 +10,14 @@ struct MenuBarView: View {
       statusItem
       Divider()
       speakWindowButton
-      speakClipboardButton
+      speakActionsSection
       playbackSection
       Divider()
       settingsButton
       quitButton
+    }
+    .onReceive(SettingsWindowManager.shared.openSettingsPublisher) {
+      showSettings()
     }
   }
 
@@ -27,14 +30,20 @@ struct MenuBarView: View {
     .keyboardShortcut("n", modifiers: .command)
   }
 
-  // MARK: - Speak Clipboard
+  // MARK: - Speak Actions
 
   @ViewBuilder
-  private var speakClipboardButton: some View {
+  private var speakActionsSection: some View {
+    Button("Speak Selected Text") {
+      TTSServiceProvider.shared.speakSelectedText()
+    }
+    .disabled(!settings.isConfigured || player.state == .loading)
+
     Button("Speak Clipboard") {
       TTSServiceProvider.shared.speakClipboard()
     }
     .disabled(!settings.isConfigured || player.state == .loading)
+
     Divider()
   }
 
@@ -102,9 +111,20 @@ struct MenuBarView: View {
 
   private var settingsButton: some View {
     Button("Settings...") {
-      openSettings()
+      showSettings()
     }
     .keyboardShortcut(",", modifiers: .command)
+  }
+
+  private func showSettings() {
+    // Activate app and bring existing Settings window to front if it exists
+    NSApp.activate(ignoringOtherApps: true)
+
+    if let settingsWindow = NSApp.windows.first(where: { $0.title.contains("Settings") }) {
+      settingsWindow.makeKeyAndOrderFront(nil)
+    } else {
+      openSettings()
+    }
   }
 
   private var quitButton: some View {

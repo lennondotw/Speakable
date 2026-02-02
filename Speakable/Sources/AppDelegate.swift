@@ -37,6 +37,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
   }
 
   private func setupGlobalHotkey() {
+    KeyboardShortcuts.onKeyUp(for: .openSpeakBar) {
+      SpeakWindowController.shared.showWindow()
+    }
+
+    KeyboardShortcuts.onKeyUp(for: .speakSelectedText) {
+      TTSServiceProvider.shared.speakSelectedText()
+    }
+
     KeyboardShortcuts.onKeyUp(for: .speakClipboard) {
       TTSServiceProvider.shared.speakClipboard()
     }

@@ -5,8 +5,10 @@ A native macOS menu bar app that adds a system-wide "Speak with Speakable" servi
 ## Features
 
 - **System Service Integration** - Adds "Services → Speak with Speakable" to the right-click menu in any app
-- **Speak Window** - Floating input panel for quick text-to-speech (⌘N from menu bar)
-- **Global Hotkey** - Speak clipboard content from anywhere with a custom shortcut
+- **Speak Window** - Floating input panel for quick text-to-speech
+- **Speak Selected Text** - Speak any selected text from anywhere with a global hotkey
+- **Speak Clipboard** - Speak clipboard content from anywhere with a global hotkey
+- **Global Hotkeys** - Customizable shortcuts for Open Speak Bar, Speak Selected Text, and Speak Clipboard
 - **Multiple TTS Models** - Support for `tts-1`, `tts-1-hd`, and `gpt-4o-mini-tts`
 - **13 Voice Options** - Alloy, Ash, Ballad, Cedar, Coral, Echo, Fable, Marin, Nova, Onyx, Sage, Shimmer, Verse
 - **Voice Instructions** - Custom voice styling with `gpt-4o-mini-tts` model
@@ -17,8 +19,9 @@ A native macOS menu bar app that adds a system-wide "Speak with Speakable" servi
 
 ## Requirements
 
-- macOS 13.0+
+- macOS 14.0+
 - OpenAI API key
+- Accessibility permission (required for "Speak Selected Text" feature)
 
 ## Installation
 
@@ -54,20 +57,25 @@ After first launch:
 1. Launch the app (it runs in the menu bar)
 2. Click the speaker icon in the menu bar → **Settings**
 3. Enter your OpenAI API key
-4. Use any of these methods to speak text:
-   - **Speak Window**: Click menu bar → **Speak...** (or ⌘N), type text, press Enter
-   - **System Service**: Select text in any app → Right-click → **Services → Speak with Speakable**
-   - **Global Hotkey**: Set a shortcut in Settings to speak clipboard content from anywhere
+4. (Optional) Set global hotkeys in Settings
+5. Use any of these methods to speak text:
+   - **Speak Window**: Click menu bar → **Speak...**, type text, press Enter
+   - **Speak Selected Text**: Select text in any app → Use global hotkey or menu bar
+   - **Speak Clipboard**: Copy text → Use global hotkey or menu bar
+   - **System Service**: Select text → Right-click → **Services → Speak with Speakable**
+
+> **Note**: The "Speak Selected Text" feature requires Accessibility permission. macOS will prompt you to grant this permission when you first use the feature.
 
 ## Configuration
 
 | Setting | Description |
 |---------|-------------|
 | API Key | Your OpenAI API key (stored in Keychain) |
-| Voice | Choose from 11 available voices |
+| Voice | Choose from 13 available voices |
 | Model | TTS-1 (fast), TTS-1 HD (quality), or GPT-4o Mini TTS (latest) |
 | Speed | Playback speed from 0.25x to 4.0x |
 | Voice Instructions | Custom instructions for GPT-4o Mini TTS model |
+| Global Hotkeys | Custom shortcuts for Open Speak Bar, Speak Selected Text, Speak Clipboard |
 
 ## Development
 

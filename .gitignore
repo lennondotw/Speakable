@@ -41,3 +41,6 @@ buildServer.json
 # Secrets
 .env
 *.env.local
+
+# Local development config (use Local.xcconfig.template as reference)
+Local.xcconfig

@@ -36,6 +36,9 @@ final class TTSServiceProvider: NSObject {
     currentTask?.cancel()
     StreamingAudioPlayer.shared.stop()
 
+    // Set loading state immediately before API call
+    StreamingAudioPlayer.shared.state = .loading
+
     // Start new TTS task
     currentTask = Task.detached { [weak self] in
       await self?.performTTS(text: text)
@@ -49,6 +52,32 @@ final class TTSServiceProvider: NSObject {
       return
     }
 
+    speakTextDirectly(text)
+  }
+
+  /// Speak currently selected text using Accessibility API
+  func speakSelectedText() {
+    // Check Accessibility permission first
+    guard AccessibilityPermission.isGranted else {
+      AccessibilityPermission.request()
+      showNotification(
+        title: "Speakable",
+        body: "Accessibility permission required. Please grant access in System Settings."
+      )
+      return
+    }
+
+    // Get selected text via Accessibility API
+    guard let text = AccessibilityPermission.getSelectedText() else {
+      showNotification(title: "Speakable", body: "No text selected.")
+      return
+    }
+
+    speakTextDirectly(text)
+  }
+
+  /// Speak given text directly
+  private func speakTextDirectly(_ text: String) {
     let settings = SettingsManager.shared
 
     guard settings.isConfigured else {
@@ -64,6 +93,9 @@ final class TTSServiceProvider: NSObject {
     currentTask?.cancel()
     StreamingAudioPlayer.shared.stop()
 
+    // Set loading state immediately before API call
+    StreamingAudioPlayer.shared.state = .loading
+
     // Start new TTS task
     currentTask = Task.detached { [weak self] in
       await self?.performTTS(text: text)
@@ -75,11 +107,6 @@ final class TTSServiceProvider: NSObject {
     let client = OpenAIClient.shared
 
     let instructions = settings.selectedModel.supportsInstructions ? settings.voiceInstructions : nil
-
-    // Update state to loading (use DispatchQueue to avoid focus issues)
-    DispatchQueue.main.async {
-      StreamingAudioPlayer.shared.state = .loading
-    }
 
     do {
       // Check if cancelled before making API call
@@ -100,7 +127,10 @@ final class TTSServiceProvider: NSObject {
         StreamingAudioPlayer.shared.startStreaming(stream)
       }
     } catch is CancellationError {
-      // Task was cancelled, do nothing
+      // Task was cancelled, reset state
+      DispatchQueue.main.async {
+        StreamingAudioPlayer.shared.state = .idle
+      }
     } catch {
       DispatchQueue.main.async {
         StreamingAudioPlayer.shared.stop()
@@ -130,8 +160,7 @@ final class TTSServiceProvider: NSObject {
 
   private func openSettingsWindow() {
     DispatchQueue.main.async {
-      NSApp.activate(ignoringOtherApps: true)
-      NSApp.openSettingsWindow()
+      SettingsWindowManager.shared.requestOpenSettings()
     }
   }
 }

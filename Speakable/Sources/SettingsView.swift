@@ -1,15 +1,19 @@
 import KeyboardShortcuts
 import SwiftUI
+import UserNotifications
 
 struct SettingsView: View {
   @StateObject private var settings = SettingsManager.shared
   @StateObject private var player = StreamingAudioPlayer.shared
+  @StateObject private var permissions = PermissionsManager.shared
   @State private var isTestingVoice = false
   @State private var showingAPIKeyField = false
   @State private var testText = "Hello! This is a test of OpenAI text to speech."
 
   var body: some View {
     Form {
+      permissionsSection
+
       Section {
         if settings.apiKey.isEmpty || showingAPIKeyField {
           LabeledContent {
@@ -93,11 +97,13 @@ struct SettingsView: View {
       }
 
       Section {
+        KeyboardShortcuts.Recorder("Open Speak Bar:", name: .openSpeakBar)
+        KeyboardShortcuts.Recorder("Speak Selected Text:", name: .speakSelectedText)
         KeyboardShortcuts.Recorder("Speak Clipboard:", name: .speakClipboard)
       } header: {
-        Text("Global Hotkey")
+        Text("Global Hotkeys")
       } footer: {
-        Text("Set a global keyboard shortcut to speak clipboard content from anywhere.")
+        Text("Set global keyboard shortcuts to use Speakable from anywhere.")
       }
 
       Section {
@@ -116,7 +122,7 @@ struct SettingsView: View {
       }
     }
     .formStyle(.grouped)
-    .frame(width: 480, height: 620)
+    .frame(width: 480, height: 720)
   }
 
   private var buttonTitle: String {
@@ -131,6 +137,48 @@ struct SettingsView: View {
     return !settings.isConfigured || testText.isEmpty
   }
 
+  // MARK: - Permissions Section
+
+  private var permissionsSection: some View {
+    Section {
+      LabeledContent {
+        if permissions.accessibilityGranted {
+          Text("Granted")
+            .foregroundStyle(.secondary)
+        } else {
+          Button("Give Access") {
+            permissions.requestAccessibility()
+          }
+        }
+      } label: {
+        Label("Accessibility", systemImage: permissions.accessibilityGranted ? "checkmark.circle.fill" : "circle")
+          .foregroundStyle(permissions.accessibilityGranted ? .green : .primary)
+      }
+
+      LabeledContent {
+        if permissions.notificationStatus == .authorized {
+          Text("Granted")
+            .foregroundStyle(.secondary)
+        } else if permissions.notificationStatus == .denied {
+          Button("Open Settings") {
+            permissions.openNotificationSettings()
+          }
+        } else {
+          Button("Give Access") {
+            permissions.requestNotification()
+          }
+        }
+      } label: {
+        Label("Notifications", systemImage: permissions.notificationStatus == .authorized ? "checkmark.circle.fill" : "circle")
+          .foregroundStyle(permissions.notificationStatus == .authorized ? .green : .primary)
+      }
+    } header: {
+      Text("Permissions")
+    } footer: {
+      Text("Accessibility is required to read selected text. Notifications are optional.")
+    }
+  }
+
   private func testOrStop() {
     if player.isPlaying {
       player.stop()
@@ -140,6 +188,9 @@ struct SettingsView: View {
       player.stop()
       return
     }
+
+    // Set loading state immediately before API call
+    player.state = .loading
 
     Task {
       do {
@@ -156,6 +207,7 @@ struct SettingsView: View {
         }
       } catch {
         await MainActor.run {
+          player.state = .idle
           let alert = NSAlert()
           alert.messageText = "Test Failed"
           alert.informativeText = error.localizedDescription

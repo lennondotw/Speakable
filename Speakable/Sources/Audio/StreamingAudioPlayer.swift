@@ -22,6 +22,8 @@ final class StreamingAudioPlayer: ObservableObject {
   )!
 
   private var streamTask: Task<Void, Never>?
+  private var pendingBufferCount = 0
+  private let bufferLock = NSLock()
 
   private init() {
     setupEngine()
@@ -40,7 +42,15 @@ final class StreamingAudioPlayer: ObservableObject {
   }
 
   private func scheduleBufferSync(_ buffer: AVAudioPCMBuffer) {
-    playerNode.scheduleBuffer(buffer, completionHandler: nil)
+    bufferLock.lock()
+    pendingBufferCount += 1
+    bufferLock.unlock()
+
+    playerNode.scheduleBuffer(buffer) { [weak self] in
+      self?.bufferLock.lock()
+      self?.pendingBufferCount -= 1
+      self?.bufferLock.unlock()
+    }
   }
 
   private struct StreamingConfig {
@@ -70,8 +80,14 @@ final class StreamingAudioPlayer: ObservableObject {
   }
 
   private func waitForPlaybackCompletion() async {
-    while playerNode.isPlaying {
-      try? await Task.sleep(nanoseconds: 100_000_000) // 100ms
+    // Wait until all scheduled buffers have finished playing
+    while true {
+      bufferLock.lock()
+      let count = pendingBufferCount
+      bufferLock.unlock()
+
+      if count == 0 { break }
+      try? await Task.sleep(nanoseconds: 50_000_000) // 50ms
     }
   }
 
@@ -148,6 +164,9 @@ final class StreamingAudioPlayer: ObservableObject {
     streamTask = nil
     playerNode.stop()
     engine.stop()
+    bufferLock.lock()
+    pendingBufferCount = 0
+    bufferLock.unlock()
     state = .idle
     isPlaying = false
   }

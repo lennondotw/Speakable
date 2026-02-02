@@ -1,14 +1,19 @@
 import AppKit
+import Combine
 
-extension NSApplication {
-  /// Opens the Settings window programmatically
-  func openSettingsWindow() {
-    activate(ignoringOtherApps: true)
-    // Use the standard macOS selector to open Settings/Preferences window
-    if #available(macOS 14.0, *) {
-      NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
-    } else {
-      NSApp.sendAction(Selector(("showPreferencesWindow:")), to: nil, from: nil)
-    }
+/// Manager for opening Settings window from non-SwiftUI code
+final class SettingsWindowManager {
+  static let shared = SettingsWindowManager()
+
+  /// Publisher that emits when settings window should be opened
+  let openSettingsPublisher = PassthroughSubject<Void, Never>()
+
+  private init() {}
+
+  /// Request to open the settings window
+  /// Call this from AppKit code; SwiftUI views subscribe to openSettingsPublisher
+  func requestOpenSettings() {
+    NSApp.activate(ignoringOtherApps: true)
+    openSettingsPublisher.send()
   }
 }
