@@ -43,6 +43,14 @@ struct SettingsView: View {
         Label(tab.title, systemImage: tab.icon)
           .tag(tab)
       }
+      .toolbar(removing: .sidebarToggle)
+      .toolbar {
+        ToolbarItem(placement: .navigation) {
+          Button(action: toggleSidebar) {
+            Image(systemName: "sidebar.leading")
+          }
+        }
+      }
       .navigationSplitViewColumnWidth(180)
     } detail: {
       Group {
@@ -61,6 +69,12 @@ struct SettingsView: View {
       }
       .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
+
+  }
+
+  private func toggleSidebar() {
+    NSApp.keyWindow?.firstResponder?
+      .tryToPerform(#selector(NSSplitViewController.toggleSidebar(_:)), with: nil)
   }
 }
 

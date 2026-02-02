@@ -15,6 +15,9 @@ packages:
   KeyboardShortcuts:
     url: https://github.com/sindresorhus/KeyboardShortcuts
     from: "2.4.0"
+  SwiftUIIntrospect:
+    url: https://github.com/siteline/swiftui-introspect
+    from: "26.0.0"
 
 schemes:
   Speakable:
@@ -40,7 +43,7 @@ settings:
   base:
     SWIFT_VERSION: "5.9"
     MARKETING_VERSION: "0.1"
-    CURRENT_PROJECT_VERSION: "2"
+    CURRENT_PROJECT_VERSION: "3"
     DEAD_CODE_STRIPPING: YES
     ENABLE_USER_SCRIPT_SANDBOXING: YES
     SWIFT_EMIT_LOC_STRINGS: YES
@@ -76,6 +79,7 @@ targets:
       path: Speakable/Resources/Speakable.entitlements
     dependencies:
       - package: KeyboardShortcuts
+      - package: SwiftUIIntrospect
 
   SpeakableTests:
     type: bundle.unit-test
