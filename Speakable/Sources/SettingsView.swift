@@ -2,23 +2,82 @@ import KeyboardShortcuts
 import SwiftUI
 import UserNotifications
 
+// MARK: - Settings Tab
+
+enum SettingsTab: String, CaseIterable, Identifiable {
+  case general
+  case voice
+  case shortcuts
+  case permissions
+
+  var id: String { rawValue }
+
+  var title: String {
+    switch self {
+    case .general: String(localized: "General")
+    case .voice: String(localized: "Voice")
+    case .shortcuts: String(localized: "Shortcuts")
+    case .permissions: String(localized: "Permissions")
+    }
+  }
+
+  var icon: String {
+    switch self {
+    case .general: "gear"
+    case .voice: "waveform"
+    case .shortcuts: "keyboard"
+    case .permissions: "lock.shield"
+    }
+  }
+}
+
+// MARK: - Settings View
+
 struct SettingsView: View {
+  @State private var selectedTab: SettingsTab? = .general
+  @State private var columnVisibility: NavigationSplitViewVisibility = .all
+
+  var body: some View {
+    NavigationSplitView(columnVisibility: $columnVisibility) {
+      List(SettingsTab.allCases, selection: $selectedTab) { tab in
+        Label(tab.title, systemImage: tab.icon)
+          .tag(tab)
+      }
+      .navigationSplitViewColumnWidth(180)
+    } detail: {
+      Group {
+        switch selectedTab {
+        case .general:
+          GeneralSettingsView()
+        case .voice:
+          VoiceSettingsView()
+        case .shortcuts:
+          ShortcutsSettingsView()
+        case .permissions:
+          PermissionsSettingsView()
+        case nil:
+          GeneralSettingsView()
+        }
+      }
+      .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+  }
+}
+
+// MARK: - General Settings
+
+private struct GeneralSettingsView: View {
   @StateObject private var settings = SettingsManager.shared
-  @StateObject private var player = StreamingAudioPlayer.shared
-  @StateObject private var permissions = PermissionsManager.shared
-  @State private var isTestingVoice = false
   @State private var showingAPIKeyField = false
-  @State private var testText = "Hello! This is a test of OpenAI text to speech."
 
   var body: some View {
     Form {
-      permissionsSection
-
       Section {
         if settings.apiKey.isEmpty || showingAPIKeyField {
           LabeledContent {
             HStack {
               SecureField("sk-...", text: $settings.apiKey)
+                .textFieldStyle(.roundedBorder)
               if showingAPIKeyField, !settings.apiKey.isEmpty {
                 Button("Done") {
                   showingAPIKeyField = false
@@ -42,11 +101,24 @@ struct SettingsView: View {
           }
         }
       } header: {
-        Text("OpenAI API Key")
+        Text("OpenAI")
       } footer: {
-        Text("Stored securely in macOS Keychain.")
+        Text("Your API key is stored securely in the macOS Keychain.")
       }
+    }
+    .formStyle(.grouped)
+  }
+}
 
+// MARK: - Voice Settings
+
+private struct VoiceSettingsView: View {
+  @StateObject private var settings = SettingsManager.shared
+  @StateObject private var player = StreamingAudioPlayer.shared
+  @State private var testText = "Hello! This is a test of OpenAI text to speech."
+
+  var body: some View {
+    Form {
       Section {
         Picker("Voice", selection: $settings.selectedVoice) {
           ForEach(TTSVoice.allCases) { voice in
@@ -90,20 +162,10 @@ struct SettingsView: View {
       } footer: {
         Text(
           settings.selectedModel.supportsInstructions
-            ? "Available for GPT-4o Mini TTS."
-            : "Requires GPT-4o Mini TTS."
+            ? "Custom instructions for GPT-4o Mini TTS."
+            : "Requires GPT-4o Mini TTS model."
         )
         .foregroundColor(settings.selectedModel.supportsInstructions ? .secondary : .orange)
-      }
-
-      Section {
-        KeyboardShortcuts.Recorder("Open Speak Bar:", name: .openSpeakBar)
-        KeyboardShortcuts.Recorder("Speak Selected Text:", name: .speakSelectedText)
-        KeyboardShortcuts.Recorder("Speak Clipboard:", name: .speakClipboard)
-      } header: {
-        Text("Global Hotkeys")
-      } footer: {
-        Text("Set global keyboard shortcuts to use Speakable from anywhere.")
       }
 
       Section {
@@ -116,13 +178,12 @@ struct SettingsView: View {
         Text("Test")
       } footer: {
         if !settings.isConfigured {
-          Text("Enter your API key to test.")
+          Text("Enter your API key in General settings to test.")
             .foregroundColor(.orange)
         }
       }
     }
     .formStyle(.grouped)
-    .frame(width: 480, height: 720)
   }
 
   private var buttonTitle: String {
@@ -137,48 +198,6 @@ struct SettingsView: View {
     return !settings.isConfigured || testText.isEmpty
   }
 
-  // MARK: - Permissions Section
-
-  private var permissionsSection: some View {
-    Section {
-      LabeledContent {
-        if permissions.accessibilityGranted {
-          Text("Granted")
-            .foregroundStyle(.secondary)
-        } else {
-          Button("Give Access") {
-            permissions.requestAccessibility()
-          }
-        }
-      } label: {
-        Label("Accessibility", systemImage: permissions.accessibilityGranted ? "checkmark.circle.fill" : "circle")
-          .foregroundStyle(permissions.accessibilityGranted ? .green : .primary)
-      }
-
-      LabeledContent {
-        if permissions.notificationStatus == .authorized {
-          Text("Granted")
-            .foregroundStyle(.secondary)
-        } else if permissions.notificationStatus == .denied {
-          Button("Open Settings") {
-            permissions.openNotificationSettings()
-          }
-        } else {
-          Button("Give Access") {
-            permissions.requestNotification()
-          }
-        }
-      } label: {
-        Label("Notifications", systemImage: permissions.notificationStatus == .authorized ? "checkmark.circle.fill" : "circle")
-          .foregroundStyle(permissions.notificationStatus == .authorized ? .green : .primary)
-      }
-    } header: {
-      Text("Permissions")
-    } footer: {
-      Text("Accessibility is required to read selected text. Notifications are optional.")
-    }
-  }
-
   private func testOrStop() {
     if player.isPlaying {
       player.stop()
@@ -189,7 +208,6 @@ struct SettingsView: View {
       return
     }
 
-    // Set loading state immediately before API call
     player.state = .loading
 
     Task {
@@ -199,7 +217,8 @@ struct SettingsView: View {
           voice: settings.selectedVoice,
           model: settings.selectedModel,
           speed: settings.speechSpeed,
-          instructions: settings.selectedModel.supportsInstructions ? settings.voiceInstructions : nil
+          instructions: settings.selectedModel.supportsInstructions
+            ? settings.voiceInstructions : nil
         )
 
         await MainActor.run {
@@ -219,6 +238,90 @@ struct SettingsView: View {
   }
 }
 
+// MARK: - Shortcuts Settings
+
+private struct ShortcutsSettingsView: View {
+  var body: some View {
+    Form {
+      Section {
+        KeyboardShortcuts.Recorder("Open Speak Bar:", name: .openSpeakBar)
+        KeyboardShortcuts.Recorder("Speak Selected Text:", name: .speakSelectedText)
+        KeyboardShortcuts.Recorder("Speak Clipboard:", name: .speakClipboard)
+      } header: {
+        Text("Global Hotkeys")
+      } footer: {
+        Text("Set global keyboard shortcuts to trigger Speakable from anywhere.")
+      }
+    }
+    .formStyle(.grouped)
+  }
+}
+
+// MARK: - Permissions Settings
+
+private struct PermissionsSettingsView: View {
+  @StateObject private var permissions = PermissionsManager.shared
+
+  var body: some View {
+    Form {
+      Section {
+        LabeledContent {
+          if permissions.accessibilityGranted {
+            Text("Granted")
+              .foregroundStyle(.secondary)
+          } else {
+            Button("Grant Access") {
+              permissions.requestAccessibility()
+            }
+          }
+        } label: {
+          Label(
+            "Accessibility",
+            systemImage: permissions.accessibilityGranted ? "checkmark.circle.fill" : "circle"
+          )
+          .foregroundStyle(permissions.accessibilityGranted ? .green : .primary)
+        }
+      } header: {
+        Text("Accessibility")
+      } footer: {
+        Text("Required to read selected text from other applications.")
+      }
+
+      Section {
+        LabeledContent {
+          if permissions.notificationStatus == .authorized {
+            Text("Granted")
+              .foregroundStyle(.secondary)
+          } else if permissions.notificationStatus == .denied {
+            Button("Open Settings") {
+              permissions.openNotificationSettings()
+            }
+          } else {
+            Button("Grant Access") {
+              permissions.requestNotification()
+            }
+          }
+        } label: {
+          Label(
+            "Notifications",
+            systemImage: permissions.notificationStatus == .authorized
+              ? "checkmark.circle.fill" : "circle"
+          )
+          .foregroundStyle(permissions.notificationStatus == .authorized ? .green : .primary)
+        }
+      } header: {
+        Text("Notifications")
+      } footer: {
+        Text("Optional. Shows notifications when speech completes or errors occur.")
+      }
+    }
+    .formStyle(.grouped)
+  }
+}
+
+// MARK: - Preview
+
 #Preview {
   SettingsView()
+    .frame(width: 600, height: 500)
 }

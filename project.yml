@@ -57,9 +57,7 @@ targets:
       Release: Local.xcconfig
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: sh.lennon.Speakable
         INFOPLIST_FILE: Speakable/Resources/Info.plist
-        PRODUCT_NAME: Speakable
         PRODUCT_MODULE_NAME: Speakable
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ENABLE_HARDENED_RUNTIME: YES
@@ -67,6 +65,13 @@ targets:
         LD_RUNPATH_SEARCH_PATHS:
           - $(inherited)
           - "@executable_path/../Frameworks"
+      configs:
+        Debug:
+          PRODUCT_BUNDLE_IDENTIFIER: sh.lennon.Speakable.debug
+          PRODUCT_NAME: Speakable Debug
+        Release:
+          PRODUCT_BUNDLE_IDENTIFIER: sh.lennon.Speakable
+          PRODUCT_NAME: Speakable
     entitlements:
       path: Speakable/Resources/Speakable.entitlements
     dependencies:
@@ -82,6 +87,10 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: sh.lennon.Speakable.tests
-        TEST_HOST: $(BUILT_PRODUCTS_DIR)/Speakable.app/Contents/MacOS/Speakable
         BUNDLE_LOADER: $(TEST_HOST)
         GENERATE_INFOPLIST_FILE: YES
+      configs:
+        Debug:
+          TEST_HOST: $(BUILT_PRODUCTS_DIR)/Speakable Debug.app/Contents/MacOS/Speakable Debug
+        Release:
+          TEST_HOST: $(BUILT_PRODUCTS_DIR)/Speakable.app/Contents/MacOS/Speakable

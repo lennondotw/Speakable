@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct MenuBarView: View {
-  @Environment(\.openSettings) private var openSettings
+  @Environment(\.openWindow) private var openWindow
   @StateObject private var settings = SettingsManager.shared
   @StateObject private var player = StreamingAudioPlayer.shared
 
@@ -117,14 +117,8 @@ struct MenuBarView: View {
   }
 
   private func showSettings() {
-    // Activate app and bring existing Settings window to front if it exists
+    openWindow(id: "settings")
     NSApp.activate(ignoringOtherApps: true)
-
-    if let settingsWindow = NSApp.windows.first(where: { $0.title.contains("Settings") }) {
-      settingsWindow.makeKeyAndOrderFront(nil)
-    } else {
-      openSettings()
-    }
   }
 
   private var quitButton: some View {

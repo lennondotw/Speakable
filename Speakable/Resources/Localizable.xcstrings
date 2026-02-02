@@ -15,6 +15,7 @@
       }
     },
     "Accessibility is required to read selected text. Notifications are optional." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -34,9 +35,6 @@
         }
       }
     },
-    "Available for GPT-4o Mini TTS." : {
-
-    },
     "Change" : {
       "localizations" : {
         "zh-Hans" : {
@@ -46,6 +44,9 @@
           }
         }
       }
+    },
+    "Custom instructions for GPT-4o Mini TTS." : {
+
     },
     "Done" : {
       "localizations" : {
@@ -70,7 +71,11 @@
         }
       }
     },
+    "Enter your API key in General settings to test." : {
+
+    },
     "Enter your API key to test." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -79,6 +84,9 @@
           }
         }
       }
+    },
+    "General" : {
+
     },
     "Generating..." : {
       "extractionState" : "stale",
@@ -92,6 +100,7 @@
       }
     },
     "Give Access" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -110,6 +119,9 @@
           }
         }
       }
+    },
+    "Grant Access" : {
+
     },
     "Granted" : {
       "localizations" : {
@@ -161,7 +173,11 @@
         }
       }
     },
+    "OpenAI" : {
+
+    },
     "OpenAI API Key" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -170,6 +186,9 @@
           }
         }
       }
+    },
+    "Optional. Shows notifications when speech completes or errors occur." : {
+
     },
     "Pause" : {
 
@@ -199,7 +218,6 @@
 
     },
     "Required to read selected text from other applications." : {
-      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -209,7 +227,7 @@
         }
       }
     },
-    "Requires GPT-4o Mini TTS." : {
+    "Requires GPT-4o Mini TTS model." : {
 
     },
     "Reset" : {
@@ -231,7 +249,11 @@
     "Resume" : {
 
     },
+    "Set global keyboard shortcuts to trigger Speakable from anywhere." : {
+
+    },
     "Set global keyboard shortcuts to use Speakable from anywhere." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -261,6 +283,9 @@
           }
         }
       }
+    },
+    "Shortcuts" : {
+
     },
     "sk-..." : {
 
@@ -318,6 +343,7 @@
       }
     },
     "Stored securely in macOS Keychain." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -347,6 +373,12 @@
           }
         }
       }
+    },
+    "Test Split View" : {
+
+    },
+    "Test Split View..." : {
+
     },
     "Test Voice" : {
       "extractionState" : "stale",
@@ -388,6 +420,9 @@
           }
         }
       }
+    },
+    "Your API key is stored securely in the macOS Keychain." : {
+
     }
   },
   "version" : "1.0"

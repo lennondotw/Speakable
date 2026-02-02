@@ -9,8 +9,11 @@ struct SpeakableApp: App {
       MenuBarView()
     }
 
-    Settings {
+    Window("Settings", id: "settings") {
       SettingsView()
+        .frame(minWidth: 600, maxWidth: 600, minHeight: 400, maxHeight: .infinity)
     }
+    .defaultSize(width: 600, height: 500)
+    .windowResizability(.contentSize)
   }
 }

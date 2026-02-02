@@ -14,7 +14,7 @@ default:
 generate:
     xcodegen generate
 
-# Output: build/derived/Build/Products/Debug/Speakable.app
+# Output: build/derived/Build/Products/Debug/Speakable Debug.app
 # Build Debug configuration
 build: generate
     xcodebuild -scheme Speakable -configuration Debug -derivedDataPath build/derived build | xcbeautify
@@ -24,15 +24,19 @@ build: generate
 build-release: generate
     xcodebuild -scheme Speakable -configuration Release -derivedDataPath build/derived build | xcbeautify
 
+# Kill running Debug app (if any)
+kill-debug:
+    @-pkill -x "Speakable Debug" 2>/dev/null || true
+
 # Opens the already-built Debug app (no rebuild).
 # Requires prior `just build`.
 # Run app without building
 run-built:
-    open build/derived/Build/Products/Debug/Speakable.app
+    open "build/derived/Build/Products/Debug/Speakable Debug.app"
 
 # Build and run the app in Debug mode.
 # Build then run
-run: build run-built
+run: kill-debug build run-built
 
 # Run tests without rebuilding.
 # Requires prior `just test-build`.
