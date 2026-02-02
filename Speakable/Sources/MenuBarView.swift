@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct MenuBarView: View {
+  @Environment(\.openSettings) private var openSettings
   @StateObject private var settings = SettingsManager.shared
   @StateObject private var player = StreamingAudioPlayer.shared
 
@@ -100,8 +101,8 @@ struct MenuBarView: View {
   // MARK: - Menu Buttons
 
   private var settingsButton: some View {
-    SettingsLink {
-      Text("Settings...")
+    Button("Settings...") {
+      openSettings()
     }
     .keyboardShortcut(",", modifiers: .command)
   }
