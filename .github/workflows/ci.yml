@@ -6,23 +6,93 @@ on:
   pull_request:
     branches: [main]
 
+env:
+  DEVELOPER_DIR: /Applications/Xcode_15.2.app/Contents/Developer
+
 jobs:
-  build-and-test:
+  # Lint and format checks run in parallel
+  lint:
+    name: SwiftLint
     runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
 
+      - name: Cache Homebrew
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/Library/Caches/Homebrew
+            /usr/local/Cellar/swiftlint
+          key: ${{ runner.os }}-homebrew-swiftlint-${{ hashFiles('.swiftlint.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-homebrew-swiftlint-
+
+      - name: Install SwiftLint
+        run: brew install swiftlint || brew upgrade swiftlint
+
+      - name: Lint
+        run: swiftlint --strict
+
+  format-check:
+    name: SwiftFormat
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache Homebrew
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/Library/Caches/Homebrew
+            /usr/local/Cellar/swiftformat
+          key: ${{ runner.os }}-homebrew-swiftformat-${{ hashFiles('.swiftformat') }}
+          restore-keys: |
+            ${{ runner.os }}-homebrew-swiftformat-
+
+      - name: Install SwiftFormat
+        run: brew install swiftformat || brew upgrade swiftformat
+
+      - name: Check formatting
+        run: swiftformat --lint .
+
+  # Build and test runs independently
+  build-and-test:
+    name: Build & Test
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache Homebrew
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/Library/Caches/Homebrew
+            /usr/local/Cellar/xcodegen
+            /usr/local/Cellar/xcbeautify
+          key: ${{ runner.os }}-homebrew-build-tools
+          restore-keys: |
+            ${{ runner.os }}-homebrew-build-
+
+      - name: Cache Xcode DerivedData
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Developer/Xcode/DerivedData
+          key: ${{ runner.os }}-deriveddata-${{ hashFiles('project.yml', '**/*.swift') }}
+          restore-keys: |
+            ${{ runner.os }}-deriveddata-
+
       - name: Install dependencies
         run: |
-          brew install xcodegen xcbeautify
+          brew install xcodegen xcbeautify || true
 
       - name: Generate Xcode project
         run: xcodegen generate
 
-      - name: Build
+      - name: Build (Debug)
         run: |
           xcodebuild -project OpenAITTS.xcodeproj \
             -scheme OpenAITTS \
+            -configuration Debug \
             -destination 'platform=macOS' \
             build 2>&1 | xcbeautify
 
@@ -30,27 +100,69 @@ jobs:
         run: |
           xcodebuild -project OpenAITTS.xcodeproj \
             -scheme OpenAITTS \
+            -configuration Debug \
             -destination 'platform=macOS' \
             test 2>&1 | xcbeautify
 
-  lint:
+  # Release build only runs on main branch after tests pass
+  release-build:
+    name: Release Build
     runs-on: macos-14
+    needs: [build-and-test]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install SwiftLint
-        run: brew install swiftlint
+      - name: Cache Homebrew
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/Library/Caches/Homebrew
+            /usr/local/Cellar/xcodegen
+            /usr/local/Cellar/xcbeautify
+          key: ${{ runner.os }}-homebrew-build-tools
+          restore-keys: |
+            ${{ runner.os }}-homebrew-build-
 
-      - name: Lint
-        run: swiftlint --strict
+      - name: Cache Xcode DerivedData
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Developer/Xcode/DerivedData
+          key: ${{ runner.os }}-deriveddata-release-${{ hashFiles('project.yml', '**/*.swift') }}
+          restore-keys: |
+            ${{ runner.os }}-deriveddata-release-
 
-  format-check:
-    runs-on: macos-14
-    steps:
-      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          brew install xcodegen xcbeautify || true
 
-      - name: Install SwiftFormat
-        run: brew install swiftformat
+      - name: Generate Xcode project
+        run: xcodegen generate
 
-      - name: Check formatting
-        run: swiftformat --lint .
+      - name: Build (Release)
+        run: |
+          xcodebuild -project OpenAITTS.xcodeproj \
+            -scheme OpenAITTS \
+            -configuration Release \
+            -destination 'platform=macOS' \
+            -derivedDataPath build \
+            build 2>&1 | xcbeautify
+
+      - name: Package app
+        id: package
+        run: |
+          APP_PATH="build/Build/Products/Release/OpenAI TTS.app"
+          ZIP_NAME="OpenAI-TTS-${GITHUB_SHA::7}.zip"
+
+          # Create zip
+          cd "$(dirname "$APP_PATH")"
+          zip -r -y "$GITHUB_WORKSPACE/$ZIP_NAME" "OpenAI TTS.app"
+
+          echo "zip_name=$ZIP_NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: OpenAI-TTS-${{ github.sha }}
+          path: ${{ steps.package.outputs.zip_name }}
+          retention-days: 30
