@@ -64,6 +64,9 @@ final class SettingsManager: ObservableObject {
 
   private let keychainService = "sh.lennon.Speakable"
   private let keychainAccount = "openai-api-key"
+  // Access group allows sharing keychain items across Debug/Release builds
+  // Format: TeamID.BundleID (NAP6NNQHV6 is the Team ID)
+  private let keychainAccessGroup = "NAP6NNQHV6.sh.lennon.Speakable"
 
   private let voiceKey = "selectedVoice"
   private let modelKey = "selectedModel"
@@ -149,6 +152,7 @@ final class SettingsManager: ObservableObject {
       kSecClass as String: kSecClassGenericPassword,
       kSecAttrService as String: keychainService,
       kSecAttrAccount as String: keychainAccount,
+      kSecAttrAccessGroup as String: keychainAccessGroup,
       kSecUseDataProtectionKeychain as String: false,
     ]
     SecItemDelete(deleteQuery as CFDictionary)
@@ -160,6 +164,7 @@ final class SettingsManager: ObservableObject {
       kSecClass as String: kSecClassGenericPassword,
       kSecAttrService as String: keychainService,
       kSecAttrAccount as String: keychainAccount,
+      kSecAttrAccessGroup as String: keychainAccessGroup,
       kSecValueData as String: data,
       kSecUseDataProtectionKeychain as String: false,
     ]
@@ -175,6 +180,7 @@ final class SettingsManager: ObservableObject {
       kSecClass as String: kSecClassGenericPassword,
       kSecAttrService as String: keychainService,
       kSecAttrAccount as String: keychainAccount,
+      kSecAttrAccessGroup as String: keychainAccessGroup,
       kSecReturnData as String: true,
       kSecMatchLimit as String: kSecMatchLimitOne,
       kSecUseDataProtectionKeychain as String: false,

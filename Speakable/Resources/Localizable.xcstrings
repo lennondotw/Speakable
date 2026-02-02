@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%.2fx" : {
+
+    },
     "Accessibility" : {
       "localizations" : {
         "zh-Hans" : {
@@ -31,6 +34,9 @@
         }
       }
     },
+    "Available for GPT-4o Mini TTS." : {
+
+    },
     "Change" : {
       "localizations" : {
         "zh-Hans" : {
@@ -50,6 +56,9 @@
           }
         }
       }
+    },
+    "e.g. Speak cheerfully, Read slowly..." : {
+
     },
     "Enter test text..." : {
       "localizations" : {
@@ -72,6 +81,7 @@
       }
     },
     "Generating..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -161,6 +171,9 @@
         }
       }
     },
+    "Pause" : {
+
+    },
     "Permissions" : {
       "localizations" : {
         "zh-Hans" : {
@@ -172,6 +185,7 @@
       }
     },
     "Quit" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -181,7 +195,11 @@
         }
       }
     },
+    "Quit Speakable" : {
+
+    },
     "Required to read selected text from other applications." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -190,6 +208,12 @@
           }
         }
       }
+    },
+    "Requires GPT-4o Mini TTS." : {
+
+    },
+    "Reset" : {
+
     },
     "Reset to 1.0x" : {
       "localizations" : {
@@ -200,6 +224,12 @@
           }
         }
       }
+    },
+    "Reset to default" : {
+
+    },
+    "Resume" : {
+
     },
     "Set global keyboard shortcuts to use Speakable from anywhere." : {
       "localizations" : {
@@ -212,6 +242,7 @@
       }
     },
     "Settings" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -231,6 +262,12 @@
         }
       }
     },
+    "sk-..." : {
+
+    },
+    "Speak Clipboard" : {
+
+    },
     "Speak Clipboard:" : {
       "localizations" : {
         "zh-Hans" : {
@@ -241,6 +278,9 @@
         }
       }
     },
+    "Speak Selected Text" : {
+
+    },
     "Speak Selected Text:" : {
       "localizations" : {
         "zh-Hans" : {
@@ -250,6 +290,12 @@
           }
         }
       }
+    },
+    "Speak..." : {
+
+    },
+    "Speakable" : {
+
     },
     "Speed" : {
       "localizations" : {
@@ -292,6 +338,7 @@
       }
     },
     "Test Failed" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -302,6 +349,7 @@
       }
     },
     "Test Voice" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {

@@ -14,25 +14,40 @@ default:
 generate:
     xcodegen generate
 
-# Output: ~/Library/Developer/Xcode/DerivedData/Speakable-*/Build/Products/Debug/
+# Output: build/derived/Build/Products/Debug/Speakable.app
 # Build Debug configuration
 build: generate
-    xcodebuild -scheme Speakable -configuration Debug build | xcbeautify
+    xcodebuild -scheme Speakable -configuration Debug -derivedDataPath build/derived build | xcbeautify
 
-# Output: ~/Library/Developer/Xcode/DerivedData/Speakable-*/Build/Products/Release/
+# Output: build/derived/Build/Products/Release/Speakable.app
 # Build Release configuration (optimized, no debug symbols)
 build-release: generate
-    xcodebuild -scheme Speakable -configuration Release build | xcbeautify
+    xcodebuild -scheme Speakable -configuration Release -derivedDataPath build/derived build | xcbeautify
 
-# The app will launch automatically after successful build.
-# Build and run the app in Debug mode
-run: build
-    open ~/Library/Developer/Xcode/DerivedData/Speakable-*/Build/Products/Debug/Speakable.app
+# Opens the already-built Debug app (no rebuild).
+# Requires prior `just build`.
+# Run app without building
+run-built:
+    open build/derived/Build/Products/Debug/Speakable.app
 
-# Tests are defined in SpeakableTests/ directory.
-# Run unit tests
-test: generate
-    xcodebuild -scheme Speakable -configuration Debug test | xcbeautify
+# Build and run the app in Debug mode.
+# Build then run
+run: build run-built
+
+# Run tests without rebuilding.
+# Requires prior `just test-build`.
+# Run tests only
+test-run:
+    xcodebuild -scheme Speakable -configuration Debug -derivedDataPath build/derived test-without-building | xcbeautify
+
+# Build for testing only (no run).
+# Build for testing
+test-build: generate
+    xcodebuild -scheme Speakable -configuration Debug -derivedDataPath build/derived build-for-testing | xcbeautify
+
+# Build and run unit tests.
+# Build then test
+test: test-build test-run
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Code Quality
@@ -71,7 +86,6 @@ fix:
 # Clean build artifacts
 clean:
     rm -rf build/
-    rm -rf ~/Library/Developer/Xcode/DerivedData/Speakable-*
     @echo "Cleaned build artifacts"
 
 # Run `just generate` to recreate it.
