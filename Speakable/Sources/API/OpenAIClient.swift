@@ -23,7 +23,9 @@ enum OpenAIError: LocalizedError {
     case let .apiError(statusCode, message):
       "API error (\(statusCode)): \(message)"
     case let .textTooLong(length, maxLength):
-      "Text is too long (\(length) characters). Maximum allowed is \(maxLength) characters."
+      String(
+        localized: "Text is too long (\(length) characters). Maximum allowed is \(maxLength) characters."
+      )
     }
   }
 }
@@ -68,6 +70,11 @@ final class OpenAIClient {
 
     guard !settings.apiKey.isEmpty else {
       throw OpenAIError.missingAPIKey
+    }
+
+    // Validate text length
+    guard text.count <= maxCharacters else {
+      throw OpenAIError.textTooLong(length: text.count, maxLength: maxCharacters)
     }
 
     guard let url = URL(string: baseURL) else {

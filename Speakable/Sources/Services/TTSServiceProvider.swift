@@ -131,9 +131,15 @@ final class TTSServiceProvider: NSObject {
       DispatchQueue.main.async {
         StreamingAudioPlayer.shared.state = .idle
       }
-    } catch {
-      DispatchQueue.main.async {
+    } catch let error as OpenAIError {
+      DispatchQueue.main.async { [weak self] in
         StreamingAudioPlayer.shared.stop()
+        self?.showNotification(title: "Speakable", body: error.localizedDescription)
+      }
+    } catch {
+      DispatchQueue.main.async { [weak self] in
+        StreamingAudioPlayer.shared.stop()
+        self?.showNotification(title: "Speakable", body: error.localizedDescription)
       }
     }
   }
