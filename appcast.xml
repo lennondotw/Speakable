@@ -3,6 +3,14 @@
     <channel>
         <title>Speakable</title>
         <item>
+            <title>0.2.3</title>
+            <pubDate>Fri, 06 Feb 2026 15:02:23 +0000</pubDate>
+            <sparkle:version>15</sparkle:version>
+            <sparkle:shortVersionString>0.2.3</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <enclosure url="https://github.com/lennondotw/Speakable/releases/download/v0.2.3/Speakable-0.2.3.zip" length="1809157" type="application/octet-stream" sparkle:edSignature="eM6aQikWabYyPr7EfNJwMwH20nPd4pNCrET7dPA62y1IV+3meRa19Aob8bgJh8QOnMgloa+6kS4isYiLF0KhDQ=="/>
+        </item>
+        <item>
             <title>0.2.2</title>
             <pubDate>Fri, 06 Feb 2026 14:55:08 +0000</pubDate>
             <sparkle:version>14</sparkle:version>
@@ -17,14 +25,6 @@
             <sparkle:shortVersionString>0.2.1</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
             <enclosure url="https://github.com/lennondotw/Speakable/releases/download/v0.2.1/Speakable-0.2.1.zip" length="1693276" type="application/octet-stream" sparkle:edSignature="ZZWSUjjQaXtKpS9j4jxfw2J+k5ZgcEGWaeaBm/h4rHSnXxMQ1FMXKplWfEL4IPU6FNUgmB1oFuGVSJHNXoWOBA=="/>
-        </item>
-        <item>
-            <title>0.2.0</title>
-            <pubDate>Fri, 06 Feb 2026 13:52:02 +0000</pubDate>
-            <sparkle:version>12</sparkle:version>
-            <sparkle:shortVersionString>0.2.0</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <enclosure url="https://github.com/lennondotw/Speakable/releases/download/v0.2.0/Speakable-0.2.0.zip" length="1693258" type="application/octet-stream" sparkle:edSignature="qNm2J6HxakLecM4Mr8lF7KHe5tFqEXTfIUQy0QtIJMu3D5ncnx4Bg5z3wejj5BlAx5UhMdb4jNReqwhGxPFlBA=="/>
         </item>
     </channel>
 </rss>
