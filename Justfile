@@ -2,8 +2,8 @@
 # Run `just` or `just --list` to see all available commands
 
 # Auto-derived from project.yml
-app_version := `grep 'MARKETING_VERSION:' project.yml | sed 's/.*"\([^"]*\)".*/\1/'`
-app_build   := `grep 'CURRENT_PROJECT_VERSION:' project.yml | sed 's/.*"\([^"]*\)".*/\1/'`
+app_version := `grep 'MARKETING_VERSION:' project.yml | sed "s/.*['\"]\\([^'\"]*\\)['\"].*/\\1/"`
+app_build   := `grep 'CURRENT_PROJECT_VERSION:' project.yml | sed "s/.*['\"]\\([^'\"]*\\)['\"].*/\\1/"`
 
 sparkle_version := "2.8.1"
 
@@ -216,7 +216,7 @@ bump-version part:
         patch) new="${major}.${minor}.$((patch + 1))" ;;
         *)     new="{{part}}" ;;
     esac
-    sed -i '' "s/MARKETING_VERSION: \".*\"/MARKETING_VERSION: \"$new\"/" project.yml
+    sed -i '' "s/MARKETING_VERSION: '.*'/MARKETING_VERSION: '$new'/" project.yml
     echo "Version: $current → $new (build {{app_build}})"
     echo "Run 'just generate' to apply."
 
@@ -225,7 +225,7 @@ bump-build:
     #!/usr/bin/env bash
     set -euo pipefail
     next=$(({{app_build}} + 1))
-    sed -i '' "s/CURRENT_PROJECT_VERSION: \".*\"/CURRENT_PROJECT_VERSION: \"$next\"/" project.yml
+    sed -i '' "s/CURRENT_PROJECT_VERSION: '.*'/CURRENT_PROJECT_VERSION: '$next'/" project.yml
     echo "Version: {{app_version}} (build {{app_build}} → $next)"
     echo "Run 'just generate' to apply."
 
