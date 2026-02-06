@@ -79,6 +79,8 @@ targets:
         INFOPLIST_FILE: Speakable/Resources/Info.plist
         PRODUCT_MODULE_NAME: Speakable
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ENABLE_APP_SANDBOX: YES
+        ENABLE_OUTGOING_NETWORK_CONNECTIONS: YES
         ENABLE_HARDENED_RUNTIME: YES
         COMBINE_HIDPI_IMAGES: YES
         # Allow build scripts to modify BUILT_PRODUCTS_DIR (needed for Sparkle fix)
@@ -95,6 +97,10 @@ targets:
           PRODUCT_NAME: Speakable
     entitlements:
       path: Speakable/Resources/Speakable.entitlements
+      properties:
+        com.apple.security.temporary-exception.mach-lookup.global-name:
+          - $(PRODUCT_BUNDLE_IDENTIFIER)-spks
+          - $(PRODUCT_BUNDLE_IDENTIFIER)-spki
     postBuildScripts:
       # Sparkle's SPM XCFramework ships non-standard root symlinks (Autoupdate,
       # Updater.app) that cause "unsealed contents" code signing errors.

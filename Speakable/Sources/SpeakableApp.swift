@@ -39,18 +39,40 @@ struct SpeakableApp: App {
     }
 
     let dotDiameter: CGFloat = 5
+    let cutoutPadding: CGFloat = 1.5
+    let cutoutDiameter = dotDiameter + cutoutPadding * 2
     let baseSize = waveform.size
 
+    // Dot center at bottom-right corner
+    let dotCenter = NSPoint(
+      x: baseSize.width - dotDiameter / 2,
+      y: dotDiameter / 2
+    )
+
     let image = NSImage(size: baseSize, flipped: false) { _ in
+      guard let ctx = NSGraphicsContext.current?.cgContext else { return false }
+
+      // 1) Draw waveform
       waveform.draw(in: NSRect(origin: .zero, size: baseSize))
 
-      NSColor.systemYellow.setFill()
-      NSBezierPath(ovalIn: NSRect(
-        x: baseSize.width - dotDiameter,
-        y: baseSize.height - dotDiameter,
+      // 2) Punch out a circular cutout around the dot using .clear blend mode
+      ctx.setBlendMode(.clear)
+      ctx.fillEllipse(in: CGRect(
+        x: dotCenter.x - cutoutDiameter / 2,
+        y: dotCenter.y - cutoutDiameter / 2,
+        width: cutoutDiameter,
+        height: cutoutDiameter
+      ))
+
+      // 3) Draw the yellow dot on top
+      ctx.setBlendMode(.normal)
+      ctx.setFillColor(NSColor.systemYellow.cgColor)
+      ctx.fillEllipse(in: CGRect(
+        x: dotCenter.x - dotDiameter / 2,
+        y: dotCenter.y - dotDiameter / 2,
         width: dotDiameter,
         height: dotDiameter
-      )).fill()
+      ))
 
       return true
     }
