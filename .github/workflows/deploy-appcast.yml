@@ -25,9 +25,9 @@ jobs:
       - name: Checkout gh-pages to /tmp/gh-pages
         run: |
           if git fetch origin gh-pages --depth=1 2>/dev/null; then
-            git worktree add /tmp/gh-pages origin/gh-pages
+            git worktree add -b gh-pages /tmp/gh-pages origin/gh-pages
           else
-            git worktree add --orphan /tmp/gh-pages
+            git worktree add --orphan -b gh-pages /tmp/gh-pages
           fi
 
       - name: Download Sparkle tools
