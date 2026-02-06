@@ -5,7 +5,10 @@ extension KeyboardShortcuts.Name {
   static let openSpeakBar = Self("openSpeakBar")
 
   /// Global hotkey for speaking selected text
-  static let speakSelectedText = Self("speakSelectedText")
+  static let speakSelectedText = Self(
+    "speakSelectedText",
+    default: .init(.zero, modifiers: [.control, .shift, .command])
+  )
 
   /// Global hotkey for speaking clipboard content
   static let speakClipboard = Self("speakClipboard")
