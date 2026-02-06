@@ -47,6 +47,14 @@ jobs:
       - name: Install dependencies
         run: brew install xcodegen xcbeautify
 
+      - name: Create Local.xcconfig for CI
+        run: |
+          cat > Local.xcconfig << 'EOF'
+          DEVELOPMENT_TEAM=
+          CODE_SIGN_IDENTITY=-
+          CODE_SIGN_STYLE=Manual
+          EOF
+
       - name: Generate Xcode project
         run: xcodegen generate
 
@@ -95,6 +103,14 @@ jobs:
 
       - name: Install dependencies
         run: brew install xcodegen xcbeautify
+
+      - name: Create Local.xcconfig for CI
+        run: |
+          cat > Local.xcconfig << 'EOF'
+          DEVELOPMENT_TEAM=
+          CODE_SIGN_IDENTITY=-
+          CODE_SIGN_STYLE=Manual
+          EOF
 
       - name: Generate Xcode project
         run: xcodegen generate
