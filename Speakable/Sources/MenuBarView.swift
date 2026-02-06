@@ -57,15 +57,15 @@ struct MenuBarView: View {
   private var statusText: String {
     switch player.state {
     case .loading:
-      "Generating..."
+      String(localized: "Generating...")
     case .playing:
-      "Playing"
+      String(localized: "Playing")
     case .paused:
-      "Paused"
+      String(localized: "Paused")
     case .error:
-      "Error"
+      String(localized: "Error")
     case .idle:
-      settings.isConfigured ? "Ready" : "API Key not set"
+      settings.isConfigured ? String(localized: "Ready") : String(localized: "API Key not set")
     }
   }
 

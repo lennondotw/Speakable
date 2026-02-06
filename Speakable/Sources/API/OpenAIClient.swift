@@ -13,15 +13,15 @@ enum OpenAIError: LocalizedError {
   var errorDescription: String? {
     switch self {
     case .missingAPIKey:
-      "API Key is not configured. Please set your OpenAI API key in settings."
+      String(localized: "API Key is not configured. Please set your OpenAI API key in settings.")
     case .invalidURL:
-      "Invalid API URL."
+      String(localized: "Invalid API URL.")
     case let .networkError(error):
-      "Network error: \(error.localizedDescription)"
+      String(localized: "Network error: \(error.localizedDescription)")
     case .invalidResponse:
-      "Invalid response from server."
+      String(localized: "Invalid response from server.")
     case let .apiError(statusCode, message):
-      "API error (\(statusCode)): \(message)"
+      String(localized: "API error (\(statusCode)): \(message)")
     case let .textTooLong(length, maxLength):
       String(
         localized: "Text is too long (\(length) characters). Maximum allowed is \(maxLength) characters."

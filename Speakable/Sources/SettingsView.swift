@@ -201,9 +201,9 @@ private struct VoiceSettingsView: View {
   }
 
   private var buttonTitle: String {
-    if player.isPlaying { return "Stop" }
-    if case .loading = player.state { return "Generating..." }
-    return "Test Voice"
+    if player.isPlaying { return String(localized: "Stop") }
+    if case .loading = player.state { return String(localized: "Generating...") }
+    return String(localized: "Test Voice")
   }
 
   private var buttonDisabled: Bool {
@@ -242,7 +242,7 @@ private struct VoiceSettingsView: View {
         await MainActor.run {
           player.state = .idle
           let alert = NSAlert()
-          alert.messageText = "Test Failed"
+          alert.messageText = String(localized: "Test Failed")
           alert.informativeText = error.localizedDescription
           alert.alertStyle = .warning
           alert.runModal()

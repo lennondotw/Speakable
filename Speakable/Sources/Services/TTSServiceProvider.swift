@@ -23,10 +23,10 @@ final class TTSServiceProvider: NSObject {
     let settings = SettingsManager.shared
 
     guard settings.isConfigured else {
-      error.pointee = "API Key not configured. Please open Speakable settings." as NSString
+      error.pointee = String(localized: "API Key not configured. Please open Speakable settings.") as NSString
       showNotification(
         title: "Speakable",
-        body: "API Key not configured. Please open the app to set up your API key."
+        body: String(localized: "API Key not configured. Please open the app to set up your API key.")
       )
       openSettingsWindow()
       return
@@ -48,7 +48,7 @@ final class TTSServiceProvider: NSObject {
   /// Speak text from clipboard
   func speakClipboard() {
     guard let text = NSPasteboard.general.string(forType: .string), !text.isEmpty else {
-      showNotification(title: "Speakable", body: "Clipboard is empty or contains no text.")
+      showNotification(title: "Speakable", body: String(localized: "Clipboard is empty or contains no text."))
       return
     }
 
@@ -62,14 +62,14 @@ final class TTSServiceProvider: NSObject {
       AccessibilityPermission.request()
       showNotification(
         title: "Speakable",
-        body: "Accessibility permission required. Please grant access in System Settings."
+        body: String(localized: "Accessibility permission required. Please grant access in System Settings.")
       )
       return
     }
 
     // Get selected text via Accessibility API
     guard let text = AccessibilityPermission.getSelectedText() else {
-      showNotification(title: "Speakable", body: "No text selected.")
+      showNotification(title: "Speakable", body: String(localized: "No text selected."))
       return
     }
 
@@ -83,7 +83,7 @@ final class TTSServiceProvider: NSObject {
     guard settings.isConfigured else {
       showNotification(
         title: "Speakable",
-        body: "API Key not configured. Please open the app to set up your API key."
+        body: String(localized: "API Key not configured. Please open the app to set up your API key.")
       )
       openSettingsWindow()
       return

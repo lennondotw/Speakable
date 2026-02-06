@@ -267,7 +267,7 @@ struct SpeakView: View {
         await MainActor.run {
           player.state = .idle
           let alert = NSAlert()
-          alert.messageText = "Speech Generation Failed"
+          alert.messageText = String(localized: "Speech Generation Failed")
           alert.informativeText = error.localizedDescription
           alert.alertStyle = .warning
           alert.runModal()

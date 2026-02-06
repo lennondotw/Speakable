@@ -14,23 +14,72 @@
         }
       }
     },
-    "Accessibility is required to read selected text. Notifications are optional." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "需要辅助功能权限来读取选中的文本。通知权限为可选。"
-          }
-        }
-      }
-    },
     "API Key" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "API 密钥"
+          }
+        }
+      }
+    },
+    "API error (%lld): %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API 错误（%lld）：%@"
+          }
+        }
+      }
+    },
+    "API Key is not configured. Please set your OpenAI API key in settings." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未配置 API 密钥。请在设置中设置您的 OpenAI API 密钥。"
+          }
+        }
+      }
+    },
+    "API Key not configured. Please open Speakable settings." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未配置 API 密钥。请打开 Speakable 设置。"
+          }
+        }
+      }
+    },
+    "API Key not configured. Please open the app to set up your API key." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未配置 API 密钥。请打开应用设置您的 API 密钥。"
+          }
+        }
+      }
+    },
+    "API Key not set" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未设置 API 密钥"
+          }
+        }
+      }
+    },
+    "Accessibility permission required. Please grant access in System Settings." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要辅助功能权限。请在系统设置中授予权限。"
           }
         }
       }
@@ -45,8 +94,25 @@
         }
       }
     },
+    "Clipboard is empty or contains no text." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "剪贴板为空或不包含文本。"
+          }
+        }
+      }
+    },
     "Custom instructions for GPT-4o Mini TTS." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GPT-4o Mini TTS 自定义指令。"
+          }
+        }
+      }
     },
     "Done" : {
       "localizations" : {
@@ -59,7 +125,24 @@
       }
     },
     "e.g. Speak cheerfully, Read slowly..." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "例如：用欢快的语气朗读、慢速朗读…"
+          }
+        }
+      }
+    },
+    "Error" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "错误"
+          }
+        }
+      }
     },
     "Enter test text..." : {
       "localizations" : {
@@ -72,40 +155,31 @@
       }
     },
     "Enter your API key in General settings to test." : {
-
-    },
-    "Enter your API key to test." : {
-      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "请输入 API 密钥以进行测试。"
+            "value" : "请在通用设置中输入 API 密钥以进行测试。"
           }
         }
       }
     },
     "General" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通用"
+          }
+        }
+      }
     },
     "Generating..." : {
-      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "生成中…"
-          }
-        }
-      }
-    },
-    "Give Access" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "授予权限"
           }
         }
       }
@@ -121,7 +195,14 @@
       }
     },
     "Grant Access" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "授予权限"
+          }
+        }
+      }
     },
     "Granted" : {
       "localizations" : {
@@ -133,12 +214,52 @@
         }
       }
     },
+    "Invalid API URL." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无效的 API URL。"
+          }
+        }
+      }
+    },
+    "Invalid response from server." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服务器响应无效。"
+          }
+        }
+      }
+    },
     "Model" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "模型"
+          }
+        }
+      }
+    },
+    "Network error: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网络错误：%@"
+          }
+        }
+      }
+    },
+    "No text selected." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未选中任何文本。"
           }
         }
       }
@@ -176,22 +297,45 @@
     "OpenAI" : {
 
     },
-    "OpenAI API Key" : {
-      "extractionState" : "stale",
+    "Optional. Shows notifications when speech completes or errors occur." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "OpenAI API 密钥"
+            "value" : "可选。在朗读完成或发生错误时显示通知。"
           }
         }
       }
     },
-    "Optional. Shows notifications when speech completes or errors occur." : {
-
-    },
     "Pause" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暂停"
+          }
+        }
+      }
+    },
+    "Paused" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已暂停"
+          }
+        }
+      }
+    },
+    "Playing" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在播放"
+          }
+        }
+      }
     },
     "Permissions" : {
       "localizations" : {
@@ -203,19 +347,25 @@
         }
       }
     },
-    "Quit" : {
-      "extractionState" : "stale",
+    "Quit Speakable" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "退出"
+            "value" : "退出 Speakable"
           }
         }
       }
     },
-    "Quit Speakable" : {
-
+    "Ready" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "就绪"
+          }
+        }
+      }
     },
     "Required to read selected text from other applications." : {
       "localizations" : {
@@ -228,10 +378,24 @@
       }
     },
     "Requires GPT-4o Mini TTS model." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要使用 GPT-4o Mini TTS 模型。"
+          }
+        }
+      }
     },
     "Reset" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重置"
+          }
+        }
+      }
     },
     "Reset to 1.0x" : {
       "localizations" : {
@@ -244,21 +408,31 @@
       }
     },
     "Reset to default" : {
-
-    },
-    "Resume" : {
-
-    },
-    "Set global keyboard shortcuts to trigger Speakable from anywhere." : {
-
-    },
-    "Set global keyboard shortcuts to use Speakable from anywhere." : {
-      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "设置全局快捷键，以便在任何地方使用 Speakable。"
+            "value" : "重置为默认值"
+          }
+        }
+      }
+    },
+    "Resume" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "继续"
+          }
+        }
+      }
+    },
+    "Set global keyboard shortcuts to trigger Speakable from anywhere." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置全局快捷键，以便在任何地方触发 Speakable。"
           }
         }
       }
@@ -284,13 +458,37 @@
       }
     },
     "Shortcuts" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "快捷键"
+          }
+        }
+      }
     },
     "sk-..." : {
 
     },
     "Speak Clipboard" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "朗读剪贴板"
+          }
+        }
+      }
+    },
+    "Speech Generation Failed" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "语音生成失败"
+          }
+        }
+      }
     },
     "Speak Clipboard:" : {
       "localizations" : {
@@ -303,7 +501,14 @@
       }
     },
     "Speak Selected Text" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "朗读选中文本"
+          }
+        }
+      }
     },
     "Speak Selected Text:" : {
       "localizations" : {
@@ -316,7 +521,14 @@
       }
     },
     "Speak..." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "朗读…"
+          }
+        }
+      }
     },
     "Speakable" : {
 
@@ -337,17 +549,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "停止"
-          }
-        }
-      }
-    },
-    "Stored securely in macOS Keychain." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已安全存储在 macOS 钥匙串中。"
           }
         }
       }
@@ -373,7 +574,6 @@
       }
     },
     "Test Failed" : {
-      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -384,7 +584,6 @@
       }
     },
     "Test Voice" : {
-      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -425,7 +624,14 @@
       }
     },
     "Your API key is stored securely in the macOS Keychain." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "您的 API 密钥已安全存储在 macOS 钥匙串中。"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
