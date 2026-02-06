@@ -8,7 +8,7 @@
             <sparkle:version>12</sparkle:version>
             <sparkle:shortVersionString>0.2.0</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <enclosure url="https://github.com/lennondotw/Speakable/releases/download/v0.2.0/Speakable-0.2.0.zip" length="1692110" type="application/octet-stream" sparkle:edSignature="MqZ1ht/dhXOsZiq+nFUjD5j4bULlp9a81J7a3GanE/LZODh3Qj76OisNhvpErzk4lHN8LNSKttg6StHfUV2vBA=="/>
+            <enclosure url="https://github.com/lennondotw/Speakable/releases/download/v0.2.0/Speakable-0.2.0.zip" length="1693258" type="application/octet-stream" sparkle:edSignature="qNm2J6HxakLecM4Mr8lF7KHe5tFqEXTfIUQy0QtIJMu3D5ncnx4Bg5z3wejj5BlAx5UhMdb4jNReqwhGxPFlBA=="/>
         </item>
         <item>
             <title>0.1.5</title>
