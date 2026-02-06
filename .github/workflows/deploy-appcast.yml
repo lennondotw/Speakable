@@ -5,11 +5,10 @@ on:
     types: [published]
 
 permissions:
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
-  group: pages
+  group: gh-pages-deploy
   cancel-in-progress: false
 
 env:
@@ -19,9 +18,6 @@ jobs:
   deploy:
     name: Generate & Deploy Appcast
     runs-on: macos-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - uses: actions/checkout@v4
@@ -41,18 +37,16 @@ jobs:
             --pattern '*.zip' \
             --dir staging
 
-      - name: Fetch existing appcast
+      - name: Fetch existing appcast from gh-pages
         continue-on-error: true
         run: |
-          curl -sfL "https://lennondotw.github.io/Speakable/appcast.xml" \
-            -o staging/appcast.xml
+          git fetch origin gh-pages --depth=1 || true
+          git show origin/gh-pages:appcast.xml > staging/appcast.xml 2>/dev/null || true
 
       - name: Generate appcast
         env:
           SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
         run: |
-          VERSION="${{ github.event.release.tag_name }}"
-          VERSION="${VERSION#v}"
           echo "$SPARKLE_PRIVATE_KEY" > /tmp/sparkle_key
           sparkle-tools/bin/generate_appcast \
             --ed-key-file /tmp/sparkle_key \
@@ -60,17 +54,28 @@ jobs:
             staging
           rm -f /tmp/sparkle_key
 
-      - name: Prepare Pages content
+      - name: Deploy to gh-pages branch
         run: |
-          mkdir -p _site
-          cp staging/appcast.xml _site/
-          cp docs/index.html _site/
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Create orphan gh-pages branch or check it out
+          if git rev-parse --verify origin/gh-pages >/dev/null 2>&1; then
+            git checkout gh-pages
+          else
+            git checkout --orphan gh-pages
+            git rm -rf . || true
+          fi
+
+          # Copy generated content
+          cp staging/appcast.xml .
+          cp docs/index.html . 2>/dev/null || true
+
           echo "Pages content:"
-          ls -la _site/
+          ls -la appcast.xml index.html
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          # Commit and push
+          git add appcast.xml index.html
+          git diff --cached --quiet && echo "No changes to deploy" && exit 0
+          git commit -m "Update appcast for ${{ github.event.release.tag_name }}"
+          git push origin gh-pages

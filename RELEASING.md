@@ -5,18 +5,19 @@
 ```
 Local (your Mac)                     GitHub
 ─────────────────                    ──────────────────────────
-1. bump version                      
-2. archive + sign (Developer ID)     
-3. zip + notarize (Apple)            
+1. bump version
+2. archive + sign (Developer ID)
+3. zip + notarize (Apple)
 4. gh release create ──────────────► GitHub Release (zip)
                                          │
                                          ▼
                                      deploy-appcast.yml
                                      ├─ download zip
                                      ├─ generate appcast.xml
-                                     └─ deploy to GitHub Pages
+                                     └─ push to gh-pages branch
                                               │
                                               ▼
+                                     GitHub Pages (auto-deploy)
                                      lennondotw.github.io/
                                      └─ appcast.xml ◄── Sparkle checks this
 ```
@@ -46,7 +47,8 @@ build/sparkle-tools/bin/generate_keys -x build/sparkle_private_key --account spe
    - Value: contents of `build/sparkle_private_key`
 
 2. **Pages**: Settings → Pages → Build and deployment
-   - Source: **GitHub Actions**
+   - Source: **Deploy from a branch**
+   - Branch: `gh-pages` / `/ (root)`
 
 ## Release Steps
 
@@ -69,6 +71,7 @@ gh release create v$(just version | cut -d' ' -f1) \
 ```
 
 Step 4 triggers the `deploy-appcast` workflow which:
+
 - Downloads the zip from the release
 - Fetches the existing appcast from GitHub Pages (preserves history)
 - Generates an updated `appcast.xml` with Sparkle EdDSA signature
@@ -78,14 +81,14 @@ Users running the app will receive an update notification on next check.
 
 ## What Lives Where
 
-| Artifact | Location | In Git? |
-|----------|----------|---------|
-| Source code | GitHub repo | Yes |
-| Release zip | GitHub Releases | No (binary) |
-| appcast.xml | GitHub Pages | No (CI-generated) |
-| Sparkle private key | Local Keychain + GitHub Secret | No |
-| Developer ID cert | Local Keychain | No |
-| Apple credentials | Local Keychain | No |
+| Artifact            | Location                       | In Git?           |
+| ------------------- | ------------------------------ | ----------------- |
+| Source code         | GitHub repo                    | Yes               |
+| Release zip         | GitHub Releases                | No (binary)       |
+| appcast.xml         | `gh-pages` branch → Pages      | Yes (with history) |
+| Sparkle private key | Local Keychain + GitHub Secret | No                |
+| Developer ID cert   | Local Keychain                 | No                |
+| Apple credentials   | Local Keychain                 | No                |
 
 ## Verifying a Release
 
@@ -107,4 +110,4 @@ If the Sparkle EdDSA private key is compromised:
 1. Generate a new key pair: `just sparkle-generate-keys`
 2. Update `SUPublicEDKey` in `Info.plist` with the new public key
 3. Update the `SPARKLE_PRIVATE_KEY` GitHub Secret
-4. Release a new version — users on the old version can still update because Sparkle verifies against the key embedded in *their* installed app, so you must publish one final release signed with the **old** key that embeds the **new** public key
+4. Release a new version — users on the old version can still update because Sparkle verifies against the key embedded in _their_ installed app, so you must publish one final release signed with the **old** key that embeds the **new** public key
