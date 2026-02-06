@@ -7,6 +7,16 @@ options:
   createIntermediateGroups: true
   generateEmptyDirectories: true
   developmentLanguage: en
+  postGenCommand: |
+    for dir in \
+      Speakable.xcodeproj/project.xcworkspace/xcshareddata \
+      "Speakable.xcodeproj/project.xcworkspace/xcuserdata/${USER}.xcuserdatad"; do
+      mkdir -p "$dir"
+      WS="$dir/WorkspaceSettings.xcsettings"
+      plutil -create xml1 "$WS"
+      plutil -insert DerivedDataLocationStyle -string WorkspaceRelativePath "$WS"
+      plutil -insert DerivedDataCustomLocation -string build/DerivedData "$WS"
+    done
   knownRegions:
     - en
     - zh-Hans
@@ -71,6 +81,8 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ENABLE_HARDENED_RUNTIME: YES
         COMBINE_HIDPI_IMAGES: YES
+        # Allow build scripts to modify BUILT_PRODUCTS_DIR (needed for Sparkle fix)
+        ENABLE_USER_SCRIPT_SANDBOXING: NO
         LD_RUNPATH_SEARCH_PATHS:
           - $(inherited)
           - '@executable_path/../Frameworks'
@@ -83,6 +95,20 @@ targets:
           PRODUCT_NAME: Speakable
     entitlements:
       path: Speakable/Resources/Speakable.entitlements
+    postBuildScripts:
+      # Sparkle's SPM XCFramework ships non-standard root symlinks (Autoupdate,
+      # Updater.app, XPCServices) that cause "unsealed contents" code signing
+      # errors. Remove them so export-archive re-signs a clean framework.
+      # Ref: https://steipete.me/posts/2025/code-signing-and-notarization-sparkle-and-tears
+      - name: Fix Sparkle Framework Structure
+        script: |
+          FRAMEWORK="${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/Sparkle.framework"
+          if [[ -d "$FRAMEWORK" ]]; then
+            for link in Autoupdate Updater.app XPCServices; do
+              [[ -L "$FRAMEWORK/$link" ]] && rm "$FRAMEWORK/$link" || true
+            done
+          fi
+        basedOnDependencyAnalysis: false
     dependencies:
       - package: KeyboardShortcuts
       - package: SwiftUIIntrospect
@@ -93,6 +119,9 @@ targets:
     platform: macOS
     sources:
       - path: SpeakableTests
+    configFiles:
+      Debug: Local.xcconfig
+      Release: Local.xcconfig
     dependencies:
       - target: Speakable
     settings:

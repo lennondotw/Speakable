@@ -24,16 +24,16 @@ setup-lsp: generate
     xcode-build-server config -scheme Speakable -workspace Speakable.xcodeproj/project.xcworkspace
     # Patch build_root to use local DerivedData instead of Xcode default
     tmp=$(mktemp)
-    jq '.build_root = "{{justfile_directory()}}/build/derived"' buildServer.json > "$tmp" && mv "$tmp" buildServer.json
+    jq '.build_root = "{{justfile_directory()}}/build/DerivedData"' buildServer.json > "$tmp" && mv "$tmp" buildServer.json
     echo "buildServer.json configured with local DerivedData"
 
 # Build Debug configuration
 build: generate
-    xcodebuild -scheme Speakable -configuration Debug -derivedDataPath build/derived build | xcbeautify
+    xcodebuild -scheme Speakable -configuration Debug -derivedDataPath build/DerivedData build | xcbeautify
 
 # Build Release configuration
 build-release: generate
-    xcodebuild -scheme Speakable -configuration Release -derivedDataPath build/derived build | xcbeautify
+    xcodebuild -scheme Speakable -configuration Release -derivedDataPath build/DerivedData build | xcbeautify
 
 # Kill running Debug app (if any)
 kill-debug:
@@ -41,18 +41,18 @@ kill-debug:
 
 # Run already-built Debug app (requires prior `just build`)
 run-built:
-    open "build/derived/Build/Products/Debug/Speakable Debug.app"
+    open "build/DerivedData/Build/Products/Debug/Speakable Debug.app"
 
 # Build and run Debug
 run: kill-debug build run-built
 
 # Run tests without rebuilding (requires prior `just test-build`)
 test-run:
-    xcodebuild -scheme Speakable -configuration Debug -derivedDataPath build/derived test-without-building | xcbeautify
+    xcodebuild -scheme Speakable -configuration Debug -derivedDataPath build/DerivedData test-without-building | xcbeautify
 
 # Build for testing only
 test-build: generate
-    xcodebuild -scheme Speakable -configuration Debug -derivedDataPath build/derived build-for-testing | xcbeautify
+    xcodebuild -scheme Speakable -configuration Debug -derivedDataPath build/DerivedData build-for-testing | xcbeautify
 
 # Build and run unit tests
 test: test-build test-run
@@ -131,27 +131,6 @@ export-app:
         -exportOptionsPlist ExportOptions.plist | xcbeautify
     echo "Exported to build/export/"
 
-# Fix Sparkle framework in xcarchive: remove non-standard root symlinks that
-# cause "unsealed contents" code signing errors.
-# Must run BEFORE export-app so Xcode cloud signing re-signs correctly.
-# Ref: https://steipete.me/posts/2025/code-signing-and-notarization-sparkle-and-tears
-fix-sparkle-framework:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    FRAMEWORK="build/Speakable.xcarchive/Products/Applications/Speakable.app/Contents/Frameworks/Sparkle.framework"
-    if [[ ! -d "$FRAMEWORK" ]]; then
-        echo "Error: Archive not found. Run 'just archive' first."
-        exit 1
-    fi
-    echo "Removing non-standard root symlinks from Sparkle.framework in archive..."
-    for link in Autoupdate Updater.app XPCServices; do
-        if [[ -L "$FRAMEWORK/$link" ]]; then
-            rm "$FRAMEWORK/$link"
-            echo "  Removed: $link"
-        fi
-    done
-    echo "Done. Export will re-sign via Xcode cloud signing."
-
 # Create zip from exported app → build/Speakable-<version>.zip
 create-zip:
     #!/usr/bin/env bash
@@ -187,8 +166,8 @@ notarize:
     ditto -c -k --sequesterRsrc --keepParent "build/export/Speakable.app" "$ZIP_PATH"
     echo "Notarization complete!"
 
-# Full release: archive → fix sparkle → export → zip → notarize
-release: archive fix-sparkle-framework export-app create-zip notarize
+# Full release: archive → export → zip → notarize
+release: archive export-app create-zip notarize
     @echo ""
     @echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     @echo "Release {{ app_version }} (build {{ app_build }}) complete!"
@@ -270,11 +249,11 @@ beta: generate
     echo "Building for beta testing..."
     xcodebuild -scheme Speakable \
         -configuration Release \
-        -derivedDataPath build/beta-derived \
+        -derivedDataPath build/DerivedData \
         build | xcbeautify
     rm -rf build/beta
     mkdir -p build/beta
-    cp -R build/beta-derived/Build/Products/Release/Speakable.app build/beta/
+    cp -R build/DerivedData/Build/Products/Release/Speakable.app build/beta/
     echo ""
     echo "Beta build ready: build/beta/Speakable.app"
     echo "Testers: right-click → Open to bypass Gatekeeper."
