@@ -83,8 +83,6 @@ targets:
         ENABLE_OUTGOING_NETWORK_CONNECTIONS: YES
         ENABLE_HARDENED_RUNTIME: YES
         COMBINE_HIDPI_IMAGES: YES
-        # Allow build scripts to modify BUILT_PRODUCTS_DIR (needed for Sparkle fix)
-        ENABLE_USER_SCRIPT_SANDBOXING: NO
         LD_RUNPATH_SEARCH_PATHS:
           - $(inherited)
           - '@executable_path/../Frameworks'
@@ -101,21 +99,6 @@ targets:
         com.apple.security.temporary-exception.mach-lookup.global-name:
           - $(PRODUCT_BUNDLE_IDENTIFIER)-spks
           - $(PRODUCT_BUNDLE_IDENTIFIER)-spki
-    postBuildScripts:
-      # Sparkle's SPM XCFramework ships non-standard root symlinks (Autoupdate,
-      # Updater.app) that cause "unsealed contents" code signing errors.
-      # Remove them so export-archive re-signs a clean framework.
-      # Note: XPCServices symlink is standard framework structure — do NOT remove it.
-      # Ref: https://steipete.me/posts/2025/code-signing-and-notarization-sparkle-and-tears
-      - name: Fix Sparkle Framework Structure
-        script: |
-          FRAMEWORK="${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/Sparkle.framework"
-          if [[ -d "$FRAMEWORK" ]]; then
-            for link in Autoupdate Updater.app; do
-              [[ -L "$FRAMEWORK/$link" ]] && rm "$FRAMEWORK/$link" || true
-            done
-          fi
-        basedOnDependencyAnalysis: false
     dependencies:
       - package: KeyboardShortcuts
       - package: SwiftUIIntrospect
