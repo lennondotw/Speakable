@@ -9,6 +9,9 @@ options:
   createIntermediateGroups: true
   generateEmptyDirectories: true
   developmentLanguage: en
+  fileTypes:
+    icon:
+      file: true
   postGenCommand: |
     for dir in \
       Speakable.xcodeproj/project.xcworkspace/xcshareddata \
