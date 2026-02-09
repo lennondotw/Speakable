@@ -45,11 +45,7 @@ final class PermissionsManager: ObservableObject {
   // MARK: - Accessibility
 
   func requestAccessibility() {
-    AccessibilityPermission.request()
-    // Refresh after a short delay to catch the change
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-      self?.refreshAll()
-    }
+    AccessibilityPermission.requestAccess()
   }
 
   func openAccessibilitySettings() {

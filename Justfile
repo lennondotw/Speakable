@@ -48,7 +48,7 @@ run: kill-debug build run-built
 
 # Run already-built Debug app in foreground (stdout/stderr in terminal)
 run-built-fg:
-    "build/DerivedData/Speakable/Build/Products/Debug/Speakable Debug.app/Contents/MacOS/Speakable Debug"
+    disclaim "build/DerivedData/Speakable/Build/Products/Debug/Speakable Debug.app/Contents/MacOS/Speakable Debug"
 
 # Build and run Debug in foreground (stdout/stderr in terminal)
 run-fg: kill-debug build run-built-fg

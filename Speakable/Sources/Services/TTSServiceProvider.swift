@@ -59,7 +59,7 @@ final class TTSServiceProvider: NSObject {
   func speakSelectedText() {
     // Check Accessibility permission first
     guard AccessibilityPermission.isGranted else {
-      AccessibilityPermission.request()
+      AccessibilityPermission.requestAccess()
       Self.postNotification(
         title: "Speakable",
         body: String(localized: "Accessibility permission required. Please grant access in System Settings.")

@@ -1,3 +1,5 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Kila2/XcodeGen/6e784e280a9e654bddda285fcff28ed23822d729/Assets/json-schema/project.json
+
 name: Speakable
 options:
   bundleIdPrefix: sh.lennon
@@ -55,8 +57,8 @@ schemes:
 settings:
   base:
     SWIFT_VERSION: '5.9'
-    MARKETING_VERSION: '0.2.4'
-    CURRENT_PROJECT_VERSION: '16'
+    MARKETING_VERSION: '0.3.0'
+    CURRENT_PROJECT_VERSION: '17'
     DEAD_CODE_STRIPPING: YES
     ENABLE_USER_SCRIPT_SANDBOXING: YES
     SWIFT_EMIT_LOC_STRINGS: YES
@@ -79,8 +81,12 @@ targets:
         INFOPLIST_FILE: Speakable/Resources/Info.plist
         PRODUCT_MODULE_NAME: Speakable
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
-        ENABLE_APP_SANDBOX: YES
-        ENABLE_OUTGOING_NETWORK_CONNECTIONS: YES
+        # App Sandbox is intentionally disabled. The Accessibility API
+        # (AXUIElementCopyAttributeValue) requires cross-process Mach IPC to
+        # query other apps' UI elements. App Sandbox blocks these dynamic Mach
+        # port connections, causing kAXErrorCannotComplete (-25204) even when
+        # TCC Accessibility permission is granted. Hardened Runtime is kept for
+        # notarization.
         ENABLE_HARDENED_RUNTIME: YES
         COMBINE_HIDPI_IMAGES: YES
         LD_RUNPATH_SEARCH_PATHS:
@@ -93,12 +99,6 @@ targets:
         Release:
           PRODUCT_BUNDLE_IDENTIFIER: sh.lennon.Speakable
           PRODUCT_NAME: Speakable
-    entitlements:
-      path: Speakable/Resources/Speakable.entitlements
-      properties:
-        com.apple.security.temporary-exception.mach-lookup.global-name:
-          - $(PRODUCT_BUNDLE_IDENTIFIER)-spks
-          - $(PRODUCT_BUNDLE_IDENTIFIER)-spki
     dependencies:
       - package: KeyboardShortcuts
       - package: SwiftUIIntrospect

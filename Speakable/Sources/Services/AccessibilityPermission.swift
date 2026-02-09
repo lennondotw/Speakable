@@ -8,11 +8,11 @@ enum AccessibilityPermission {
     AXIsProcessTrusted()
   }
 
-  /// Request Accessibility permission
-  /// Shows system prompt if not already granted
-  /// - Returns: true if already granted, false if user needs to grant permission
+  /// Prompt the user to grant Accessibility permission.
+  /// Shows a system alert guiding the user to System Settings.
+  /// - Returns: `true` if already trusted; `false` if the prompt was shown.
   @discardableResult
-  static func request() -> Bool {
+  static func requestAccess() -> Bool {
     let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
     return AXIsProcessTrustedWithOptions(options)
   }
