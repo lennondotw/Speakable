@@ -9,7 +9,7 @@ struct SpeakTextEditor: NSViewRepresentable {
 
   private let horizontalInset: CGFloat = 16
   private let topInset: CGFloat = 16
-  private let bottomInset: CGFloat = 54
+  private let bottomInset: CGFloat = 44
 
   func makeCoordinator() -> Coordinator {
     Coordinator(self)
@@ -137,45 +137,19 @@ final class SubmitTextView: NSTextView {
 
 struct VisualEffectBackground: NSViewRepresentable {
   var material: NSVisualEffectView.Material = .popover
+  var blendingMode: NSVisualEffectView.BlendingMode = .behindWindow
 
   func makeNSView(context: Context) -> NSVisualEffectView {
     let view = NSVisualEffectView()
     view.material = material
-    view.blendingMode = .behindWindow
+    view.blendingMode = blendingMode
     view.state = .active
     return view
   }
 
   func updateNSView(_ nsView: NSVisualEffectView, context: Context) {
     nsView.material = material
-  }
-}
-
-// MARK: - Toolbar Popover Button
-
-struct ToolbarPopoverButton<Content: View>: View {
-  let icon: String
-  let label: String
-  @ViewBuilder let content: () -> Content
-
-  @State private var showPopover = false
-
-  var body: some View {
-    Button {
-      showPopover.toggle()
-    } label: {
-      HStack(spacing: 4) {
-        Image(systemName: icon)
-          .font(.system(size: 12))
-        Text(label)
-          .font(.system(size: 12))
-      }
-      .foregroundStyle(.secondary)
-    }
-    .buttonStyle(.plain)
-    .popover(isPresented: $showPopover) {
-      content()
-    }
+    nsView.blendingMode = blendingMode
   }
 }
 

@@ -10,7 +10,7 @@ final class SpeakWindow: NSPanel {
   // MARK: - Layout Constants
 
   static let fixedWidth: CGFloat = 460
-  static let contentMinHeight: CGFloat = 100
+  static let contentMinHeight: CGFloat = 120  // ~2 lines of text + padding + toolbar
   static let contentMaxHeight: CGFloat = 360
   static let titleBarHeight: CGFloat = 36
   static let titleBarGap: CGFloat = 8
@@ -22,12 +22,13 @@ final class SpeakWindow: NSPanel {
   }
 
   /// Toolbar height used by SpeakView (kept here as single source of truth)
-  static let toolbarHeight: CGFloat = 54
+  static let toolbarHeight: CGFloat = 44
 
   /// Compute the visible content-area height for a given text height.
   static func contentHeight(forTextHeight textHeight: CGFloat) -> CGFloat {
-    // 32 = 2 × textContainerInset.height (16pt top + 16pt bottom)
-    let raw = textHeight + toolbarHeight + 32
+    // textContainerInset: 16pt top + bottom padding
+    let padding: CGFloat = 32
+    let raw = textHeight + toolbarHeight + padding
     return min(max(raw, contentMinHeight), contentMaxHeight)
   }
 

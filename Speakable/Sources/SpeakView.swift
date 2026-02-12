@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct SpeakView: View {
+  @Environment(\.colorScheme) private var colorScheme
   @StateObject private var settings = SettingsManager.shared
   @StateObject private var player = StreamingAudioPlayer.shared
 
@@ -34,23 +35,7 @@ struct SpeakView: View {
 
         // Content
         ZStack(alignment: .bottom) {
-          // Text editor with gradient mask at bottom
           textArea
-            .mask(
-              VStack(spacing: 0) {
-                Color.black
-
-                LinearGradient(
-                  colors: [.black, .clear],
-                  startPoint: .top,
-                  endPoint: .bottom
-                )
-                .frame(height: 40)
-              }
-              .padding(.bottom, 44)
-            )
-
-          // Floating toolbar
           toolbar
         }
       }
@@ -66,25 +51,59 @@ struct SpeakView: View {
   // MARK: - Title Bar
 
   private var titleBar: some View {
-    HStack {
+    HStack(spacing: 12) {
       // Native close button
       StandardCloseButton {
         NSApp.windows.first(where: { $0 is SpeakWindow })?.close()
       }
       .frame(width: 14, height: 14)
 
-      Spacer()
-
-      // Title
+      // Title (left-aligned)
       Text("Speakable")
         .font(.system(size: 13, weight: .medium))
         .foregroundStyle(.secondary)
 
       Spacer()
 
-      // Spacer for symmetry
-      Color.clear
-        .frame(width: 14, height: 14)
+      // Stop button (when playing)
+      if player.isPlaying || player.state == .loading {
+        Button(action: { player.stop() }) {
+          Image(systemName: "stop.fill")
+            .font(.system(size: 10))
+            .foregroundStyle(.secondary)
+        }
+        .buttonStyle(.plain)
+      }
+
+      // Voice menu (plain text, no background/arrow)
+      Menu {
+        ForEach(TTSVoice.allCases) { voice in
+          Button(voice.rawValue.capitalized) {
+            temporaryVoice = voice
+          }
+        }
+      } label: {
+        Text(effectiveVoice.rawValue.capitalized)
+          .font(.system(size: 12))
+          .foregroundStyle(.secondary)
+      }
+      .menuStyle(.borderlessButton)
+      .menuIndicator(.hidden)
+
+      // Speed menu (plain text, no background/arrow)
+      Menu {
+        ForEach([0.5, 0.75, 1.0, 1.25, 1.5, 2.0], id: \.self) { speed in
+          Button("\(speed, specifier: "%.2g")x") {
+            temporarySpeed = speed
+          }
+        }
+      } label: {
+        Text("\(effectiveSpeed, specifier: "%.2g")x")
+          .font(.system(size: 12))
+          .foregroundStyle(.secondary)
+      }
+      .menuStyle(.borderlessButton)
+      .menuIndicator(.hidden)
     }
     .padding(.horizontal, 14)
     .frame(height: SpeakWindow.titleBarHeight)
@@ -115,124 +134,12 @@ struct SpeakView: View {
   // MARK: - Toolbar
 
   private var toolbar: some View {
-    HStack(spacing: 12) {
-      // Left side controls
-      HStack(spacing: 8) {
-        // Voice picker
-        ToolbarPopoverButton(icon: "waveform", label: effectiveVoice.rawValue.capitalized) {
-          voicePopover
-        }
-
-        // Speed picker
-        ToolbarPopoverButton(icon: "gauge.with.needle", label: String(format: "%.1f", effectiveSpeed)) {
-          speedPopover
-        }
-      }
-
+    HStack {
       Spacer()
-
-      // Right side controls
-      HStack(spacing: 8) {
-        // Stop button (when playing)
-        if player.isPlaying || player.state == .loading {
-          Button(
-            action: { player.stop() },
-            label: {
-              Image(systemName: "stop.circle")
-                .font(.system(size: 18))
-                .foregroundStyle(.secondary)
-            }
-          )
-          .buttonStyle(.plain)
-        }
-
-        // Speak button
-        speakButton
-      }
+      speakButton
     }
-    .padding(.leading, 14)
     .padding(.trailing, 10)
     .padding(.bottom, 10)
-  }
-
-  // MARK: - Speed Popover
-
-  private var speedPopover: some View {
-    VStack(alignment: .leading, spacing: 10) {
-      HStack {
-        Text("Speed")
-          .font(.system(size: 12, weight: .medium))
-        Spacer()
-        Text("\(effectiveSpeed, specifier: "%.2f")x")
-          .font(.system(size: 12, design: .monospaced))
-          .foregroundStyle(.secondary)
-      }
-
-      Slider(
-        value: Binding(
-          get: { effectiveSpeed },
-          set: { temporarySpeed = $0 }
-        ),
-        in: 0.25...4.0,
-        step: 0.05
-      )
-
-      if temporarySpeed != nil {
-        Button("Reset to default") {
-          temporarySpeed = nil
-        }
-        .font(.system(size: 11))
-        .foregroundStyle(.secondary)
-      }
-    }
-    .padding(14)
-    .frame(width: 200)
-  }
-
-  // MARK: - Voice Popover
-
-  private var voicePopover: some View {
-    VStack(alignment: .leading, spacing: 10) {
-      HStack {
-        Text("Voice")
-          .font(.system(size: 12, weight: .medium))
-        Spacer()
-        if temporaryVoice != nil {
-          Button("Reset") {
-            temporaryVoice = nil
-          }
-          .font(.system(size: 11))
-          .foregroundStyle(.secondary)
-        }
-      }
-
-      LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 6) {
-        ForEach(TTSVoice.allCases) { voice in
-          Button {
-            temporaryVoice = voice
-          } label: {
-            Text(voice.rawValue.capitalized)
-              .font(.system(size: 11))
-              .frame(maxWidth: .infinity)
-              .padding(.vertical, 6)
-              .background(
-                RoundedRectangle(cornerRadius: 6)
-                  .fill(effectiveVoice == voice ? Color.accentColor.opacity(0.15) : Color.clear)
-              )
-              .overlay(
-                RoundedRectangle(cornerRadius: 6)
-                  .strokeBorder(
-                    effectiveVoice == voice ? Color.accentColor.opacity(0.5) : Color.clear,
-                    lineWidth: 1
-                  )
-              )
-          }
-          .buttonStyle(.plain)
-        }
-      }
-    }
-    .padding(14)
-    .frame(width: 240)
   }
 
   // MARK: - Speak Button
@@ -240,6 +147,14 @@ struct SpeakView: View {
   private var speakButton: some View {
     let isLoading = player.state == .loading
     let isActive = canSpeak && !isLoading
+    let isDark = colorScheme == .dark
+
+    // Active: high contrast (white bg + black fg in dark, black bg + white fg in light)
+    // Inactive: muted solid gray
+    let activeBg = isDark ? Color.white : Color.black
+    let activeFg = isDark ? Color.black : Color.white
+    let inactiveBg = isDark ? Color(white: 0.35) : Color(white: 0.75)
+    let inactiveFg = isDark ? Color(white: 0.6) : Color(white: 0.45)
 
     return Button(action: speakOrStop) {
       Group {
@@ -252,11 +167,11 @@ struct SpeakView: View {
             .font(.system(size: 14, weight: .semibold))
         }
       }
-      .foregroundColor(isActive ? .black : .gray)
+      .foregroundColor(isActive ? activeFg : inactiveFg)
       .frame(width: 32, height: 32)
       .background(
         Circle()
-          .fill(isActive ? Color.white : Color.primary.opacity(0.1))
+          .fill(isActive ? activeBg : inactiveBg)
       )
     }
     .buttonStyle(.plain)
@@ -270,9 +185,9 @@ struct SpeakView: View {
   // MARK: - Actions
 
   private func speakOrStop() {
+    // Stop any current playback first
     if player.isPlaying || player.state == .loading {
       player.stop()
-      return
     }
 
     let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
